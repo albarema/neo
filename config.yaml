@@ -1,0 +1,9 @@
+
+glact_dir: /willerslev/software/glactools
+vcf_dir: /willerslev/users-shared/science-snm-willerslev-dsw670/projects/neo/data/20200221-impute.filter
+uk_dir: /willerslev/datasets/UKBiobank/NealeV2
+
+pop_file: /willerslev/users-shared/science-snm-willerslev-gsd818/neo/impute/UKBiobank/data/popfile_pass.acf
+lbd: /willerslev/datasets/ldetect-data/EUR/fourier_ls-all_nochr.bed
+panel_file: euras.clusters.panelfile.txt
+hg19_file: /willerslev/users-shared/science-snm-willerslev-gsd818/neo/20200309-impute/annotate_genes/hg19_autosomes.txt
