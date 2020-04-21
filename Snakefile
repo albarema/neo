@@ -112,7 +112,7 @@ rule polyAdapt_freqs:
         
 rule polyAdapt_qx:
     input:
-        neut="UKBiobank/data/gwasfreqs_neutral_{level}_{pheno}.tsv"),
+        neut="UKBiobank/data/gwasfreqs_neutral_{level}_{pheno}.tsv",
         candi="UKBiobank/data/gwasfreqs_candidates_{level}_{pheno}.tsv",
         gbr="paneldir/gbr.tsv.gz"
     output:
