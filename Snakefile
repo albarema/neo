@@ -30,7 +30,7 @@ rule all:
         #"UKBiobank/data/gwasfreqs_102_irnt.tsv.gz",
 		
         # this will run all the phenotypes
-        expand("UKBiobank/data/gwasfreqs_{pheno}.tsv.gz",pheno=pd.read_table('list_phenos_e-8.txt')['phenoname'].tolist())
+        #expand("UKBiobank/data/gwasfreqs_{pheno}.tsv.gz",pheno=pd.read_table('list_phenos_e-8.txt')['phenoname'].tolist())
         #qx
         #expand("UKBiobank/selection_UKBV2/Genscores_{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
         
@@ -74,21 +74,21 @@ rule plot_pca:
         """        
 
 rule annotate_genes:
-	input:
+    input:
 		posval="{prefix}-{panel}.{test}.vals.tsv"
 		hg19=config['hg19_file']
-	output:
+    output:
 		posval="{prefix}-{panel}.{test}.annotated.vals.tsv"
 		top="{prefix}-{panel}.{test}.annotated.top.vals.tsv"
 		merged="{prefix}-{panel}.{test}.merged.top.vals.tsv"
 		plot="annotate_genes/{prefix}-{panel}.{test}.manhattan_annotated.png"
-	shell:
-	"""
-	python IDprocess_human.py {input.posval} {input.hg19} {output.posval}
-	Rscript get.top20.R {output.posval} {output.top}
-	python merge_for_manhattan_Alba2.py {output.top} {input.posval} {output.merged}
-	Rscript manhattan_with_genes.R {output.merged} {output.plot}
-	"""
+    shell:
+        """
+        python IDprocess_human.py {input.posval} {input.hg19} {output.posval}
+        Rscript get.top20.R {output.posval} {output.top}
+        python merge_for_manhattan_Alba2.py {output.top} {input.posval} {output.merged}
+        Rscript manhattan_with_genes.R {output.merged} {output.plot}
+        """
 
 rule polyAdapt_freqs:
     input:
@@ -122,9 +122,8 @@ rule polyAdapt_qx:
     shell:
         """
         Rscript CalcQX_edit4parallel_Alba.R -w {input.candi} -e {input.neut} -o {output.qx} -s {output.scores} -n 1000 -j 1000
-Rscript CalcQX_GBR-matched_Alba.R -w {input.candi} -e {input.neut} -a {input.gbr} -n 1000 -m {output.qxfm} -j 1000
-        """    
-        
+        Rscript CalcQX_GBR-matched_Alba.R -w {input.candi} -e {input.neut} -a {input.gbr} -n 1000 -m {output.qxfm} -j 1000
+        """ 
         
         
         
