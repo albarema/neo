@@ -75,13 +75,13 @@ rule plot_pca:
 
 rule annotate_genes:
     input:
-		posval="{prefix}-{panel}.{test}.vals.tsv"
-		hg19=config['hg19_file']
+        posval="{prefix}-{panel}.{test}.vals.tsv"
+        hg19=config['hg19_file']
     output:
-		posval="{prefix}-{panel}.{test}.annotated.vals.tsv"
-		top="{prefix}-{panel}.{test}.annotated.top.vals.tsv"
-		merged="{prefix}-{panel}.{test}.merged.top.vals.tsv"
-		plot="annotate_genes/{prefix}-{panel}.{test}.manhattan_annotated.png"
+        posval="{prefix}-{panel}.{test}.annotated.vals.tsv"
+        top="{prefix}-{panel}.{test}.annotated.top.vals.tsv"
+        merged="{prefix}-{panel}.{test}.merged.top.vals.tsv"
+        plot="annotate_genes/{prefix}-{panel}.{test}.manhattan_annotated.png"
     shell:
         """
         python IDprocess_human.py {input.posval} {input.hg19} {output.posval}
@@ -124,6 +124,3 @@ rule polyAdapt_qx:
         Rscript CalcQX_edit4parallel_Alba.R -w {input.candi} -e {input.neut} -o {output.qx} -s {output.scores} -n 1000 -j 1000
         Rscript CalcQX_GBR-matched_Alba.R -w {input.candi} -e {input.neut} -a {input.gbr} -n 1000 -m {output.qxfm} -j 1000
         """ 
-        
-        
-        
