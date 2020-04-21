@@ -84,10 +84,10 @@ rule annotate_genes:
 		plot="annotate_genes/{prefix}-{panel}.{test}.manhattan_annotated.png"
 	shell:
 	"""
-		python IDprocess_human.py {input.posval} {input.hg19} {output.posval}
-		Rscript get.top20.R {output.posval} {output.top}
-		python merge_for_manhattan_Alba2.py {output.top} {input.posval} {output.merged}
-		Rscript manhattan_with_genes.R {output.merged} {output.plot}
+	python IDprocess_human.py {input.posval} {input.hg19} {output.posval}
+	Rscript get.top20.R {output.posval} {output.top}
+	python merge_for_manhattan_Alba2.py {output.top} {input.posval} {output.merged}
+	Rscript manhattan_with_genes.R {output.merged} {output.plot}
 	"""
 
 rule polyAdapt_freqs:
