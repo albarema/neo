@@ -25,14 +25,14 @@ rule all:
         #"pca/plots/neo.impute-euras.pca.plot.pdf",
 
         # annotate top genes
-        "annotate_genes/{prefix}-{panel}.{test}.manhattan_annotated.png"
+        "annotate_genes/{neo.impute-euras.pcadapt.manhattan_annotated.png"
         # this will run one of the phenotypes
-        #"UKBiobank/data/gwasfreqs_102_irnt.tsv.gz",
+        #"UKBiobank/data/gwasfreqs_pops_102_irnt.tsv.gz",
 		
         # this will run all the phenotypes
-        #expand("UKBiobank/data/gwasfreqs_{pheno}.tsv.gz",pheno=pd.read_table('list_phenos_e-8.txt')['phenoname'].tolist())
+        #expand("UKBiobank/data/gwasfreqs_pops_{pheno}.tsv.gz",pheno=pd.read_table('list_phenos_e-8.txt')['phenoname'].tolist())
         #qx
-        #expand("UKBiobank/selection_UKBV2/Genscores_{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
+        #expand("UKBiobank/selection_UKBV2/Genscores_pops_{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
         
 ## --------------------------------------------------------------------------------
 ## rules
@@ -93,13 +93,13 @@ rule annotate_genes:
 rule polyAdapt_freqs:
     input:
         infile=os.path.join(config['uk_dir'], "{pheno}.flipped.byP.gz"),
-        popfile=config['pop_file'],
+        popfile="paneldir/{level}_euras.clusters.acf.gz",
         lbd=config['lbd']
     output:
-        freqs="UKBiobank/data/gwasfreqs_{pheno}.tsv.gz",
-        outfile="UKBiobank/data/gwasfreqs_{pheno}.tsv.gz",
-        candi="UKBiobank/data/gwasfreqs_candidates_{pheno}.tsv",
-        neut="UKBiobank/data/gwasfreqs_neutral_{pheno}.tsv"
+        freqs="UKBiobank/data/gwasfreqs_{level}_{pheno}.tsv.gz",
+        outfile="UKBiobank/data/gwasfreqs_{level}_{pheno}.tsv.gz",
+        candi="UKBiobank/data/gwasfreqs_candidates_{level}_{pheno}.tsv",
+        neut="UKBiobank/data/gwasfreqs_neutral_{level}_{pheno}.tsv"
     shell:
         """
         python2 acf2ukbfreq_byP.py  -a {input.popfile} -g {input.infile} -o {output.freqs}
@@ -112,13 +112,13 @@ rule polyAdapt_freqs:
         
 rule polyAdapt_qx:
     input:
-        neut="UKBiobank/data/gwasfreqs_neutral_{pheno}.tsv"),
-        candi="UKBiobank/data/gwasfreqs_candidates_{pheno}.tsv",
+        neut="UKBiobank/data/gwasfreqs_neutral_{level}_{pheno}.tsv"),
+        candi="UKBiobank/data/gwasfreqs_candidates_{level}_{pheno}.tsv",
         gbr="paneldir/gbr.tsv.gz"
     output:
-        qx="UKBiobank/selection_UKBV2/QX_report_{pheno}.txt",
-        qxfm="UKBiobank/selection_UKBV2/QX_fm_report_{pheno}.txt",
-        scores="UKBiobank/selection_UKBV2/Genscores_{pheno}.txt"
+        qx="UKBiobank/selection_UKBV2/QX_report_{level}_{pheno}.txt",
+        qxfm="UKBiobank/selection_UKBV2/QX_fm_report_{level}_{pheno}.txt",
+        scores="UKBiobank/selection_UKBV2/Genscores_{level}_{pheno}.txt"
     shell:
         """
         Rscript CalcQX_edit4parallel_Alba.R -w {input.candi} -e {input.neut} -o {output.qx} -s {output.scores} -n 1000 -j 1000
