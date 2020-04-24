@@ -17,23 +17,26 @@ PCA_K = range(8,12)
 ADMIXTURE_K = range(7,12)
 CHROMS = range(1, 22)
 
+wildcard_constraints:
+    level="[^-]+"
+
 ## --------------------------------------------------------------------------------
 ## targets
 rule all:
     input:
         # this will trigger rules get_plink_euras, run_pca and plot_pca
-        #"pca/plots/neo.impute-euras.pca.plot.pdf",
+        "pca/plots/neo.impute-euras.pcadapt.pca.plot.pdf",
 
         # annotate top genes
-        "annotate_genes/{neo.impute-euras.pcadapt.manhattan_annotated.png"
+        "annotate_genes/neo.impute-euras.pcadapt.manhattan_annotated.png",
         # this will run one of the phenotypes
-        #"UKBiobank/data/gwasfreqs_pops_102_irnt.tsv.gz",
-		
+        #"UKBiobank/data/gwasfreqs-pops-102_irnt.tsv.gz",
+
         # this will run all the phenotypes
-        #expand("UKBiobank/data/gwasfreqs_pops_{pheno}.tsv.gz",pheno=pd.read_table('list_phenos_e-8.txt')['phenoname'].tolist())
+        expand("UKBiobank/data/gwasfreqs-pops-{pheno}.tsv.gz",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
         #qx
-        #expand("UKBiobank/selection_UKBV2/Genscores_pops_{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
-        
+        #expand("UKBiobank/selection_UKBV2/Genscores-pops-{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
+
 ## --------------------------------------------------------------------------------
 ## rules
 
@@ -48,7 +51,7 @@ rule get_plink_euras:
         "plink/{prefix}-{panel}.bim",
         "plink/{prefix}-{panel}.fam"
     shell:
-        "plink --bfile plink/{wildcards.prefix} --keep-fam {input.inds} --maf 0.01 --geno 0.01 --make-bed " 
+        "plink --bfile plink/{wildcards.prefix} --keep-fam {input.inds} --maf 0.01 --geno 0.01 --make-bed "
         "      --out plink/{wildcards.prefix}-{wildcards.panel}"
 
 rule run_pca:
@@ -56,31 +59,31 @@ rule run_pca:
         "plink/{prefix}-{panel}.bed"
     output:
         expand("pca/{prefix}-{panel}.k{k}.pcadapt", k=PCA_K, allow_missing=True),
-        "pca/plots/{prefix}-{panel}.pca.screeplot.pdf"
+        "pca/plots/{prefix}-{panel}.pcadapt.screeplot.pdf"
     shell:
         """
-        Rscript pca_k.R {input} 
+        Rscript pca_k.R {input}
         """
-        
+
 rule plot_pca:
-    input: 
+    input:
         "pca/{prefix}-{panel}.k8.pcadapt"  # TODO do you mean to hard code k=8 here?
     output:
-        "pca/plots/{prefix}-{panel}.pca.plot.pdf"
-        pvals="annotate_genes/input_pvalues.tsv"
+        "pca/plots/{prefix}-{panel}.{test}.pca.plot.pdf",
+        "annotate_genes/{prefix}-{panel}.{test}.manhattan.plot.pdf",
+        "annotate_genes/{prefix}-{panel}.{test}.vals.tsv"
     shell:
         """
-        Rscript pcadapt_plot.R {wildcards.panel} {input} {output.pvals}
-        """        
-
+        Rscript pcadapt_plot.R {wildcards.prefix}-{wildcards.panel} {input} {wildcards.test}
+        """
 rule annotate_genes:
     input:
-        posval="{prefix}-{panel}.{test}.vals.tsv"
+        posval="annotate_genes/{prefix}-{panel}.{test}.vals.tsv",
         hg19=config['hg19_file']
     output:
-        posval="{prefix}-{panel}.{test}.annotated.vals.tsv"
-        top="{prefix}-{panel}.{test}.annotated.top.vals.tsv"
-        merged="{prefix}-{panel}.{test}.merged.top.vals.tsv"
+        posval="annotate_genes/{prefix}-{panel}.{test}.annotated.vals.tsv",
+        top="annotate_genes/{prefix}-{panel}.{test}.annotated.top.vals.tsv",
+        merged="annotate_genes/{prefix}-{panel}.{test}.merged.top.vals.tsv",
         plot="annotate_genes/{prefix}-{panel}.{test}.manhattan_annotated.png"
     shell:
         """
@@ -89,17 +92,16 @@ rule annotate_genes:
         python merge_for_manhattan_Alba2.py {output.top} {input.posval} {output.merged}
         Rscript manhattan_with_genes.R {output.merged} {output.plot}
         """
-
 rule polyAdapt_freqs:
     input:
         infile=os.path.join(config['uk_dir'], "{pheno}.flipped.byP.gz"),
         popfile="paneldir/{level}_euras.clusters.acf.gz",
         lbd=config['lbd']
     output:
-        freqs="UKBiobank/data/gwasfreqs_{level}_{pheno}.tsv.gz",
-        outfile="UKBiobank/data/gwasfreqs_{level}_{pheno}.tsv.gz",
-        candi="UKBiobank/data/gwasfreqs_candidates_{level}_{pheno}.tsv",
-        neut="UKBiobank/data/gwasfreqs_neutral_{level}_{pheno}.tsv"
+        freqs="UKBiobank/data/gwasfreqs-{level}-{pheno}.tsv",
+        outfile="UKBiobank/data/gwasfreqs-{level}-{pheno}.tsv.gz",
+        candi="UKBiobank/data/gwasfreqs_candidates-{level}-{pheno}.tsv",
+        neut="UKBiobank/data/gwasfreqs_neutral-{level}-{pheno}.tsv"
     shell:
         """
         python2 acf2ukbfreq_byP.py  -a {input.popfile} -g {input.infile} -o {output.freqs}
@@ -107,20 +109,20 @@ rule polyAdapt_freqs:
         tabix -s 1 -b 2 -e 2 {output.outfile}
         python2 partitionUKB_byP.py -i {output.outfile} -b {input.lbd} -o {ouput.candi} -p 5e-08
         python2 extractneutral_byP.py -i {output.outfile} -b {input.lbd} -o {ouput.neut} -s 20 -p 0.00001
-        """           
-              
-        
+        """
+
+
 rule polyAdapt_qx:
     input:
-        neut="UKBiobank/data/gwasfreqs_neutral_{level}_{pheno}.tsv",
-        candi="UKBiobank/data/gwasfreqs_candidates_{level}_{pheno}.tsv",
+        neut="UKBiobank/data/gwasfreqs_neutral-{level}-{pheno}.tsv",
+        candi="UKBiobank/data/gwasfreqs_candidates-{level}-{pheno}.tsv",
         gbr="paneldir/gbr.tsv.gz"
     output:
-        qx="UKBiobank/selection_UKBV2/QX_report_{level}_{pheno}.txt",
-        qxfm="UKBiobank/selection_UKBV2/QX_fm_report_{level}_{pheno}.txt",
-        scores="UKBiobank/selection_UKBV2/Genscores_{level}_{pheno}.txt"
+        qx="UKBiobank/selection_UKBV2/QX_report-{level}-{pheno}.txt",
+        qxfm="UKBiobank/selection_UKBV2/QX_fm_report-{level}-{pheno}.txt",
+        scores="UKBiobank/selection_UKBV2/Genscores-{level}-{pheno}.txt"
     shell:
         """
         Rscript CalcQX_edit4parallel_Alba.R -w {input.candi} -e {input.neut} -o {output.qx} -s {output.scores} -n 1000 -j 1000
         Rscript CalcQX_GBR-matched_Alba.R -w {input.candi} -e {input.neut} -a {input.gbr} -n 1000 -m {output.qxfm} -j 1000
-        """ 
+        """
