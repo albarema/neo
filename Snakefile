@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Apr  8 14:01:16 2020
-
 @author: gsd818
 """
 
@@ -95,7 +94,7 @@ rule annotate_genes:
 rule polyAdapt_freqs:
     input:
         infile=os.path.join(config['uk_dir'], "{pheno}.flipped.byP.gz"),
-        popfile="paneldir/{level}_euras.clusters.acf.gz",
+        popfile="paneldir/{level}-euras.clusters.acf.gz",
         lbd=config['lbd']
     output:
         freqs="UKBiobank/data/gwasfreqs-{level}-{pheno}.tsv",
