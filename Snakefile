@@ -103,11 +103,11 @@ rule polyAdapt_freqs:
         neut="UKBiobank/data/gwasfreqs_neutral-{level}-{pheno}.tsv"
     shell:
         """
-        python2 acf2ukbfreq_byP.py  -a {input.popfile} -g {input.infile} -o {output.freqs}
+        python acf2ukbfreq_byP.py  -a {input.popfile} -g {input.infile} -o {output.freqs}
         cat <(head -1 {output.freqs}) <(tail -n+2 {output.freqs} | sort -k1,1 -k2,2g) | bgzip -c > {output.outfile}
         tabix -s 1 -b 2 -e 2 {output.outfile}
-        python2 partitionUKB_byP.py -i {output.outfile} -b {input.lbd} -o {output.candi} -p 5e-08
-        python2 extractneutral_byP.py -i {output.outfile} -b {input.lbd} -o {output.neut} -s 20 -p 0.00001
+        python partitionUKB_byP.py -i {output.outfile} -b {input.lbd} -o {output.candi} -p 5e-08
+        python extractneutral_byP.py -i {output.outfile} -b {input.lbd} -o {output.neut} -s 20 -p 0.00001
         """
 
 
