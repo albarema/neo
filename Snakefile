@@ -42,7 +42,7 @@ rule all:
         # this will run all the phenotypes
         #expand("UKBiobank/data/gwasfreqs-pops-{pheno}.tsv.gz",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
         #qx
-        # expand("UKBiobank/selection_UKBV2/Genscores-pops-{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
+        #expand("UKBiobank/selection_UKBV2/Genscores-pops-{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
 
 ## --------------------------------------------------------------------------------
 ## rules
@@ -190,7 +190,7 @@ def run_all_rules():
 
         with open(tsv) as fin:
             if len(fin.readlines()) > SOME_VALUE:
-                inputs.append("UKBiobank/data/gwasfreqs-pops-{pheno}.tsv.gz".format(pheno=pheno))
+                inputs.append("UKBiobank/selection_UKBV2/Genscores-pops-{pheno}.txt".format(pheno=pheno))
     #qx
     #expand("UKBiobank/selection_UKBV2/Genscores-pops-{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
 
