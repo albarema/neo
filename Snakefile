@@ -142,9 +142,9 @@ rule polyAdapt_freqs:
 
 checkpoint phenos_ids:
     input:
-        pd.read_table('phenoname.txt')['phenoname'].tolist()
+        "phenoname.txt"
     output:
-        'phenoname_polyscores.txt'
+        "phenoname_polyscores.txt"
     shell:
         """
         cd UKBiobank/data
