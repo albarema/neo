@@ -10,6 +10,8 @@ import pandas as pd
 
 configfile: "config.yaml"
 
+include: "rules/gwas.smk"
+
 ## --------------------------------------------------------------------------------
 
 wildcard_constraints:
