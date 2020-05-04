@@ -38,11 +38,11 @@ def run_all_rules():
 
     # this will run all the phenotypes
     for pheno in pd.read_table('phenoname.txt')['phenoname'].tolist():
-        tsv = checkpoints.polyAdapt_freqs.get(pheno=pheno, level='pops', ).output.candi
+        tsv = checkpoints.polyAdapt_freqs.get(pheno=pheno, level='pops').output.candi
 
         with open(tsv) as fin:
             if len(fin.readlines()) > SOME_VALUE:
-                inputs.append("UKBiobank/data/gwasfreqs-pops-{pheno}.tsv.gz",format(pheno=pheno))
+                inputs.append("UKBiobank/data/gwasfreqs-pops-{pheno}.tsv.gz".format(pheno=pheno))
     #qx
     #expand("UKBiobank/selection_UKBV2/Genscores-pops-{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
 
