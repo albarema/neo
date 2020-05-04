@@ -24,30 +24,6 @@ wildcard_constraints:
 
 ## --------------------------------------------------------------------------------
 
-def run_all_rules():
-    inputs = []
-
-    # this will trigger rules get_plink_euras, run_pca and plot_pca
-    inputs.append("pca/plots/neo.impute-euras.pcadapt.pca.plot.pdf")
-
-    # annotate top genes
-    inputs.append("annotate_genes/neo.impute-euras.pcadapt.manhattan_annotated.png")
-
-    # this will run one of the phenotypes
-    #"UKBiobank/data/gwasfreqs-pops-102_irnt.tsv.gz",
-
-    # this will run all the phenotypes
-    for pheno in pd.read_table('phenoname.txt')['phenoname'].tolist():
-        tsv = checkpoints.polyAdapt_freqs.get(pheno=pheno, level='pops').output.candi
-
-        with open(tsv) as fin:
-            if len(fin.readlines()) > SOME_VALUE:
-                inputs.append("UKBiobank/data/gwasfreqs-pops-{pheno}.tsv.gz".format(pheno=pheno))
-    #qx
-    #expand("UKBiobank/selection_UKBV2/Genscores-pops-{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
-
-    return inputs
-
 
 ## targets
 rule all:
@@ -66,7 +42,7 @@ rule all:
         # this will run all the phenotypes
         #expand("UKBiobank/data/gwasfreqs-pops-{pheno}.tsv.gz",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
         #qx
-        #expand("UKBiobank/selection_UKBV2/Genscores-pops-{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
+        # expand("UKBiobank/selection_UKBV2/Genscores-pops-{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
 
 ## --------------------------------------------------------------------------------
 ## rules
@@ -194,3 +170,28 @@ rule polyAdapt_qx:
         Rscript CalcQX_edit4parallel_Alba.R -w {input.candi} -e {input.neut} -o {output.qx} -s {output.scores} -n 1000 -j 1000
         Rscript CalcQX_GBR-matched_Alba.R -w {input.candi} -e {input.neut} -a {input.gbr} -n 1000 -m {output.qxfm} -j 1000
         """
+
+
+def run_all_rules():
+    inputs = []
+
+    # this will trigger rules get_plink_euras, run_pca and plot_pca
+    inputs.append("pca/plots/neo.impute-euras.pcadapt.pca.plot.pdf")
+
+    # annotate top genes
+    inputs.append("annotate_genes/neo.impute-euras.pcadapt.manhattan_annotated.png")
+
+    # this will run one of the phenotypes
+    #"UKBiobank/data/gwasfreqs-pops-102_irnt.tsv.gz",
+
+    # this will run all the phenotypes
+    for pheno in pd.read_table('phenoname.txt')['phenoname'].tolist():
+        tsv = checkpoints.polyAdapt_freqs.get(pheno=pheno, level='pops').output.candi
+
+        with open(tsv) as fin:
+            if len(fin.readlines()) > SOME_VALUE:
+                inputs.append("UKBiobank/data/gwasfreqs-pops-{pheno}.tsv.gz".format(pheno=pheno))
+    #qx
+    #expand("UKBiobank/selection_UKBV2/Genscores-pops-{pheno}.txt",pheno=pd.read_table('phenoname.txt')['phenoname'].tolist())
+
+    return inputs
