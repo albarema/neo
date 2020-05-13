@@ -43,3 +43,38 @@ rule polyAdapt_qx:
         Rscript CalcQX_edit4parallel_Alba.R -w {input.candi} -e {input.neut} -o {output.qx} -s {output.scores} -n 1000 -j 1000
         Rscript CalcQX_GBR-matched_Alba.R -w {input.candi} -e {input.neut} -a {input.gbr} -n 1000 -m {output.qxfm} -j 1000
         """
+
+rule polyAdapt_gbr:
+    input:
+        neut="UKBiobank/data/gwasfreqs_neutral-{level}-{pheno}.tsv",
+        candi="UKBiobank/data/gwasfreqs_candidates-{level}-{pheno}.tsv",
+        gbr="paneldir/gbr.tsv.gz"
+    output:
+        qxfm="UKBiobank/selection_UKBV2/QX_fm_report-{level}-{pheno}.txt",
+    shell:
+        """
+        Rscript CalcQX_GBR-matched_Alba.R -w {input.candi} -e {input.neut} -a {input.gbr} -n 1000 -m {output.qxfm} -j 1000
+        """
+rule qx_distr:
+    input:
+        "phenoname_qx.txt"
+    output:
+        allqx="UKBiobank/Qx-pvalue/Qx_allvals_alltraits.txt",
+        sigqx="UKBiobank/Qx-pvalue/Qx_allvals_sigtraits.txt"
+    shell:
+        """
+        Rscript QX_distr_plots.R {input} {output.allqx} {output.sigqx}
+        """
+
+rule pol_scores:
+    input:
+        cols="clusters_name_cols.txt",
+        qx="UKBiobank/Qx-pvalue/Qx_allvals_sigtraits.txt",
+        categ="traits_descript_categories.tsv"
+    output:
+        "UKBiobank/polyscores_sigtraits_5e-8.txt"
+    shell:
+        """
+        Rscript scoresPlot.R {input.qx} {input.cols} {input.categ}
+        """
+
