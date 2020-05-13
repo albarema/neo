@@ -88,3 +88,14 @@ rule annotate_genes:
         python merge_for_manhattan_Alba.py {output.top} {input.posval} {output.merged}
         Rscript manhattan_with_genes.R {output.merged} {output.plot}
         """
+rule pca_byPolscore:
+    input:
+        pca="pca/{panel}/{prefix}-{panel}-k{k}.pcadapt",
+    output:
+        "pca/plots/{panel}/{prefix}-{panel}-k{k}-pca.plot_by{pheno}_5e-8.png",
+    params:
+        pheno="{pheno}"
+    shell:
+        """
+        Rscript pcadapt_byPolscores_plot.R {wildcards.prefix}-{wildcards.panel} {input.pca} {params.pheno} 1 {wildcards.panel}
+        """
