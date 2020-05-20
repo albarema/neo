@@ -1,9 +1,19 @@
 PCA_K = range(2,12)
 
-rule all_freqs:
+import itertools
+import pandas as pd
+
+wildcard_constraints:
+    prefix="[^-]+",
+    panel="[^-]+",
+    test="[^-]+",
+ 
+pops=pd.read_table('popdir/neopops_list.txt')['files'].tolist()
+
+rule fst_all_pops:
     input:
-        expand("annotate_genes/euras50/neo.impute-euras50-pcadapt-k{k}.topRegions.tsv", k=PCA_K),
-        "Fst_GBR_neoclusters.png"
+        ["Fst/{}_vs_{}.log".format(*pair) for pair in itertools.combinations(pops, 2)]
+  
 
 rule gbr_freqs:
     input:
@@ -38,21 +48,47 @@ rule freqs_plot:
         Rscript TopRegions_Freqs_Plot.R {input.freqs} {input.pca} {params.k} {output}
         """
 
+rule annotate_genes:
+    input:
+        "annotate_genes/{panel}/{prefix}-{panel}-{test}-k{k}.topRegions.tsv"
+    output:
+        "annotate_genes/{panel}/{prefix}-{panel}-{test}-k{k}.AnnotatedGenes.tsv"
+    shell:
+        "Rscript annotate_genes.R {input} {output}" #TODO: run in candy
+
+rule fst_plink:
+    input:
+        bfile=expand("plink/{prefix}-{panel}.{ext}", ext=['bed', 'bim', 'fam'], allow_missing=True), # TODO change FID from .fam
+        panel="Fst/euras.pops.panelfile.fst.txt",
+        rmid="euras.rmid.panelfile.txt"
+    output:
+        "Fst/{prefix}-{panel}-{test}.{ext}"
+    shell:
+        """
+        #plink --bfile plink/{wildcards.prefix}-{wildcards.panel} --keep-fam {input.rmid} --make-bed --out Fst/{wildcards.prefix}-{wildcards.panel}
+        plink --bfile Fst_plink/{wildcards.prefix}-{wildcards.panel} --fst --within {input.panel} --out Fst_plink/{wildcards.prefix}-{wildcards.panel}-{wildcards.test}
+        """
+
 rule get_fst:
     input:
         freqs="neo.impute-euras-qx-popFreqs.tsv",
         gbr="gbr-qx-popFreqs.tsv",
         pops="euras.pops.panelfile.txt"
     output:
-          "Fst_GBR_neoclusters.tsv"
+        fstgbr="Fst/Fst_GBR_neoclusters.tsv",
+        fstneo="Fst/Fst_neoclusters.tsv"
     shell:
-         "Rscript CalcFst.R {input.freqs} {input.gbr} {input.pops} {output}"
+        "Rscript CalcFst.R {input.freqs} {input.gbr} {input.pops} {output.fstgbr} {output.fstneo}"
+        
 
-
-rule fst_plot:
+rule fst_between_pops:
     input:
-        "Fst_GBR_neoclusters.tsv"
+        "vcf/euras.annot.vcf"
     output:
-        "Fst_GBR_neoclusters.png"
+        "Fst/{pop1}_vs_{pop2}.log"
     shell:
-        "Rscript manplo_FST.R {input} {output}"
+        "/willerslev/users-shared/science-snm-willerslev-gsd818/Applications/vcftools/bin/vcftools "
+        " --vcf {input}"
+        " --weir-fst-pop popdir/{wildcards.pop1}.txt "
+        " --weir-fst-pop popdir/{wildcards.pop2}.txt "
+        " --out Fst/{wildcards.pop1}_vs_{wildcards.pop2} "
