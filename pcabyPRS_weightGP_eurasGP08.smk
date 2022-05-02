@@ -27,9 +27,9 @@ rule all:
         # pcaplot
         expand("pca/plots/{panel}/neo.impute-{panel}-k{k}-pca.plot_by{pheno}_2e-1.nolabels.png", pheno=PHENOS, k=2, panel=PANNAME),
         # maps
-        #expand("plots/{panel}/neo.impute-{panel}.by-{pheno}.map.plot.pdf", pheno=PHENOS, k=2, panel=PANNAME)
-
-
+        expand("plots/{panel}/neo.impute-{panel}.by-{pheno}.map.plot.pdf", pheno=PHENOS, k=2, panel=PANNAME)
+#
+--------------------------------------------------------------------------------
 rule weighted_effect:
     input:
         infile=os.path.join(config['uk_dir'], "{pheno}.gwas.imputed_v3.both_sexes.tsv.gz"),
