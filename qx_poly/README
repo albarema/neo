@@ -1,0 +1,5 @@
+- POPULATION-LEVEL PRS
+STEP 1: VCF2ACF.SMK: Get allele counts from the vcf and populations of interest
+STEP 2: POLYADAPT.SMK. Get Qx statistics and polygenic scores for those phenotypes  in which we have enough "associated-SNPs" that passed whatever significant threshold we want to use (i.e.: 5e-8)
+pcabyPRS_weightedGP.smk: pipeline to get the individual polygenic scores. We use the genotype probabilities to compute a weigthed version of the scores. This way, we take into account the uncertainty of the true genotypes
+
