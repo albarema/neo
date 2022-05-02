@@ -57,7 +57,7 @@ rule get_plink_euras:
         "   --geno {params.miss} --make-bed --out plink/{wildcards.prefix}-{wildcards.panel}"
 
 # B. SKIP
-# # rule only to be run for set: GP08, as it removes all sites that don't passed that cutoff (sites >10% individuals with GP < 0.8)
+# # Extra filters to test: it removes all sites that don't passed that cutoff (sites >10% individuals with GP < 0.8)
 # rule rm_inds_GP:
 #     input:
 #         bed="plink/{prefix}-{panel}.bed",
@@ -168,17 +168,3 @@ rule annotate_genes: # OLD ANNOTATION
         python scripts/merge_for_manhattan_Alba.py {output.top} {input.posval} {output.merged}
         Rscript scripts/manhattan_with_genes.R {output.merged} {output.plot}
         """
-
-
-"""
-plink --bfile /science/willerslev/scratch/neo/sg_freeze_20200615/1000g/plink/{wildcards.prefix}.1000g --keep-fam {input.inds} --maf 0.05 --geno 0.5 --make-bed --out plink/{wildcards.prefix}-{wildcards.panel}
-
-bcftools view -H --include 'INFO/INFO >= 0.5' <file>
-bcftools view -Ou {input.vcf} | bcftools +setGT -Oz -- -t q -n . -e 'GP[*] >= 0.8' > euras-GP08_filtered.vcf.gz
-
-/willerslev/users-shared/science-snm-willerslev-gsd818/Applications/vcftools/bin/vcftools --gzvcf euras-GP08_filtered.vcf.gz --max-missing 0.9 --recode --recode-INFO-all --out vcf/euras-GP08_filtered_sites.vcf.gz
-
-bcftools view -Ou {input.vcf} | bcftools +setGT -Oz -- -t q -n . -e 'GP[*] >= 0.8' > {input.set2missing}
-
-vcftools --gzvcf {input.set2missing} --max-missing 0.9 --recode --recode-INFO-all --out {output}
-"""
