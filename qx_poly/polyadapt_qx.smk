@@ -2,23 +2,17 @@ configfile: "config.yaml"
 import pandas as pd
 
 PANNAMES=['europe'] # ,'euras', 'europe'
-# ALLPHENOS=pd.read_table('phenotypes.filtered.both_sexes.txt')['phenotype'].tolist()
-# Phenos euras and europe:
-# FPHENOS=pd.read_table('phenotypes_qx_euras.txt')['phenotype'].tolist()
-# Phenos GP08:
-# FPHENOS=pd.read_table('phenotypes_qx_eurasGP08pass.txt')['phenotype'].tolist()
+PHENOS=pd.read_table('phenotypes_qx_euras.txt')['phenotype'].tolist()
 
-# EURAS, no genotypes set to missing! but sites are removed if more than 10% of the individuals have GP < 0.8
-## ALL
 ## --------------------------------------------------------------------------------
 ##### Target rules #####
 rule all_pops:
     input:
         # Get candidates
-        #expand("UKBiobank/data/{panel}/gwasfreqs_candidates-{level}-{pheno}.tsv",level='inds', panel=PANNAMES, pheno=ALLPHENOS),
+        #expand("UKBiobank/data/{panel}/gwasfreqs_candidates-{level}-{pheno}.tsv",level='inds', panel=PANNAMES, pheno=PHENOS),
         # Get Genscores
-        # expand("UKBiobank/selection_UKBV2/{panel}/QX_fm_report-{level}-{pheno}.txt", level='inds', panel=PANNAMES, pheno=FPHENOS),
-        expand("UKBiobank/selection_UKBV2/{panel}/QX_report-{level}-{pheno}-{pval}.txt", level='inds', panel=PANNAMES, pheno='G35', pval=['1e5', '1e3', '0.1'])
+        # expand("UKBiobank/selection_UKBV2/{panel}/QX_fm_report-{level}-{pheno}.txt", level='inds', panel=PANNAMES, pheno=PHENOS),
+        expand("UKBiobank/selection_UKBV2/{panel}/QX_report-{level}-{pheno}-{pval}.txt", level='inds', panel=PANNAMES, pheno=PHENOS, pval=['1e5', '1e3', '0.1'])
 
 
 rule polyAdapt_freqs:
