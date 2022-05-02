@@ -20,38 +20,6 @@ rule all_pops:
         # expand("UKBiobank/selection_UKBV2/{panel}/QX_fm_report-{level}-{pheno}.txt", level='inds', panel=PANNAMES, pheno=FPHENOS),
         expand("UKBiobank/selection_UKBV2/{panel}/QX_report-{level}-{pheno}-{pval}.txt", level='inds', panel=PANNAMES, pheno='G35', pval=['1e5', '1e3', '0.1'])
 
-## rules
-# rule get_pass_sites:
-#     input:
-#         vcf="vcf/euras-GP08_filtered_sites.vcf.gz", # euras-qx-infopass.vcf.gz
-#         #rmid="vcf/{panel}-sites.txt", --positions {input.rmid}
-#         inds="euras.rmid.panelfile.txt"
-#     output:
-#         passed="vcf/{panel}-qx.vcf.gz"
-#     shell:
-#         """
-#         /willerslev/users-shared/science-snm-willerslev-gsd818/Applications/vcftools/bin/vcftools --gzvcf {input.vcf} --keep {input.inds} --recode --stdout | bgzip -c > {output.passed}
-#         tabix -s 1 -b 2 -e 2 {output.passed}
-#         """
-
-# rule get_panel_galact_v2:
-#     input:
-#         vcf="vcf/{panel}-qx.vcf.gz", #eurasGP_filtered.vcf.gz with genotypes set to missing
-#         epofile="/willerslev/datasets/EPO/all.epo.gz",
-#         faifile="/willerslev/datasets/reference_genomes/hs37d5/hs37d5.fa.fai",
-#         lbdfile="/willerslev/datasets/ldetect-data/EUR/fourier_ls-all_nochr.bed",
-#         panelfile="euras.{level}.panelfile.txt" #TODO pops
-#     output:
-#         tmp1=temp("temp_vcf.{panel}.{level}.acf"),
-#         tmp2=temp("temp2v2_allchr.{panel}.{level}.acf"),
-#         popfile="paneldir/{panel}-{level}_Filtered.acf.gz"
-#     shell:
-#         """
-#         /willerslev/software/glactools/glactools vcfm2acf --epo {input.epofile} --fai {input.faifile} <(bcftools view {input.vcf}) > {output.tmp1}
-#         /willerslev/software/glactools/glactools meld -f {input.panelfile} {output.tmp1} > {output.tmp2}
-#         cat <(/willerslev/software/glactools/glactools view -h {output.tmp2} | head -1) <(/willerslev/software/glactools/glactools view {output.tmp2}| sort -k1,1 -k2,2g) | bgzip -c > {output.popfile}
-#         tabix -s 1 -b 2 -e 2 {output.popfile}
-#         """
 
 rule polyAdapt_freqs:
     input:
