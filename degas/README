@@ -5,10 +5,12 @@ We used the Tanigawa et al., 2019 method - DeGAs - to look at components of gene
 Firstly, we need to perform PCA on our set of ancient samples to look at the population structure for which we used pcadapt: https://bcm-uga.github.io/pcadapt/articles/pcadapt.html.  
 
 ## Correlation between population structrure and SNP_trait associations capture in modern humans
-We are mainly interested in the correlation between the first two population structure components (PC1 and PC2) and the SNP-trait association from de DeGAs analyses. The first two components separate western- vs east-Eurasia, and hunter-gatherers groups vs. farmers respectively. 
+We are mainly interested in the correlation between the first two population structure components (PC1 and PC2) and the SNP-trait association from de DeGAs analyses. The first two components separate western- vs east-Eurasia, and hunter-gatherers (HG) groups vs. farmers (FA) respectively. 
 
 ## Randomization scheme
 
 We finally, randomised the direction of the correlation to test if the observed correlation was significantly different from those observed in a null model with no association between SNP-trait and population structure.
 
-Top SNP-
+Top 4 DeGaS components associated with the HG-FA. These components of SNP-trait associated represented mainly lifestyle traits and body differences. 
+
+[![INSERT YOUR GRAPHIC HERE](PS1.png)]()
