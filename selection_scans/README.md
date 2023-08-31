@@ -22,5 +22,6 @@ Analyses performed:
 Candidate regions under selection were chosen by looking at those SNPs with the lowest p-values and concatenating those regions with significant variants. We labelled these regions with the HGNC protein-coding genes falling within the genomic coordinated (retrieved using the R package: biomaRt: https://bioconductor.org/packages/release/bioc/html/biomaRt.html).
 
 Manhattan plot - All Eurasians. 
+
 ![manhattan](man.png)
 
