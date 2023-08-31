@@ -1,3 +1,4 @@
+
 All pipelines are written in snakemake. I'd recommend to have a look at this repository for a more detailed explanation: https://github.com/albarema/GWAS_choice. 
 
 
