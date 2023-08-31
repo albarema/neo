@@ -19,5 +19,8 @@ Analyses performed:
 - West-Eurasians: restricting our analyses to West-Eurasia. We removed those groups that were separated in the previous analyses by the first component (Siberian samples)
 - West Eurasian Hunter-gatherer (Hg) vs. farmer scan: restricted to the loadings from the components separating HG and Neolithic farming peoples.
 
-Candidate regions under selection were chosen by looking at those SNPs with the lowest p-values and concatenating those regions with significant variants. We labelled these regions with the HGNC protein-coding genes falling within the genomic coordinated (retrieved using the R package: biomaRt: https://bioconductor.org/packages/release/bioc/html/biomaRt.html)
+Candidate regions under selection were chosen by looking at those SNPs with the lowest p-values and concatenating those regions with significant variants. We labelled these regions with the HGNC protein-coding genes falling within the genomic coordinated (retrieved using the R package: biomaRt: https://bioconductor.org/packages/release/bioc/html/biomaRt.html).
+
+Manhattan plot - All Eurasians. 
+![manhattan](man.png)
 
